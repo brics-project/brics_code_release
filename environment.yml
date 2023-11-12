@@ -1,0 +1,35 @@
+name: bright_release
+channels:
+  - pytorch
+  - nvidia
+dependencies:
+  - python >= 3.8
+  - pip
+  - numpy>=1.20
+  - click>=8.0
+  - pillow=8.3.1
+  - scipy=1.7.1
+  - pytorch=1.9.1
+  - cudatoolkit=11.1
+  - requests=2.26.0
+  - tqdm=4.62.2
+  - ninja=1.10.2
+  - matplotlib=3.4.2
+  - imageio=2.9.0
+  - pip:
+    - imgui==1.3.0
+    - glfw==2.2.0
+    - pyopengl==3.1.5
+    - imageio-ffmpeg==0.4.3
+    - pyspng
+    - torchmetrics==0.11.4
+    - lpips==0.1.4
+    - clean-fid==0.1.35
+    - tensorboard==2.11.2
+    - tensorboard-data-server==0.6.1
+    - tensorboard-plugin-wit==1.8.1
+    - fvcore==0.1.5.post20221221
+    - imagen-pytorch==1.25.2
+    - denoising-diffusion-pytorch==1.5.8
+    - opencv-python-headless==4.7.0.68
+    - siren-pytorch==0.1.6
