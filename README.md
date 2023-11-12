@@ -44,7 +44,7 @@ Run the following scripts for diffusion training
 ```bash
 python diffusions/train.py --exp_id=$EXP_ID --batch_size=64 --encoder_decoder_network=$AUTOENCODER_PKL --dataset=$DATASET_ZIP_FILE --dim=256 --sample_num=16 --record_k=1 --train_lr=8e-5 --feat_spatial_size=$KEY_CODE_SPATIAL_SIZE --num_resnet_blocks='2,2,2,2' --no_noise_perturb=true --use_min_snr false --noise_scheduler cosine_variant_v2 --cosine_decay_max_steps=1000000 --dim_mults '1,2,3,4' --atten_layers '2,3,4' --snap_k 1280 --sample_k 1280
 ```
-The `$EXPORTED_PATH` is the output path by the previous command. The `KEY_CODE_SPATIAL_SIZE` is the spatial size of the dumped key codes. Note that it is the size before tiling operation (namely $H_z,W_z$). For more information please refer to `diffusions/train.py`.
+ The `KEY_CODE_SPATIAL_SIZE` is the spatial size of the dumped key codes. Note that it is the size before tiling operation (namely $H_z,W_z$). For more information please refer to `diffusions/train.py`.
 
 
 ## Calculate Metrics
@@ -58,19 +58,21 @@ python measure_recon_error.py --network $NETWORK_PKL_PATH --dataset $VALIDATION_
 ```
 After running, a file `${EXPORTED_FOLDER}/metric.txt` will be dumped that record the LPIPS/PSNR/SSIM metrics. Note that, in default, all reconstruction results will be saved. Use `--max_save` to specify how many images wil be saved and `--runs` to specify if running repeated for more than one time. For more information please refer to the script itself.
 
-### FID/CLIP-FID/Inception Score
+### FID/CLIP-FID/Inception Score and Generate Images
 Run the following command to test the FID/CLIP-FID/Inception Score.
 
 ```bash
 python measure_gen_metrics.py --real_data $REAL_IMAGE_PATH --input_folder $GENERATED_IMAGE_PATH --exp_name $EXP_NAME --which_fid [fid,clip_fid]
 ```
 
-At each run, the script will try to find real statistics cache file under `metrics_cache` folder. If it cannot find it, it will calculate that. After running, a file `metrics_cache/${EXP_NAME}_metric_result.txt` will be dumped. You can also generated samples while calculating metrics by providing `--network_ae` and `--network_diff`. For more options, please refer to the script itself.
+At each run, the script will try to find real statistics cache file under `metrics_cache` folder (`clean-fid` will find the cache in a different local folder, see this [link](https://github.com/GaParmar/clean-fid/blob/main/cleanfid/features.py#L61-L69)). If it cannot find it, it will calculate that. After running, a file `metrics_cache/${EXP_NAME}_metric_result.txt` will be dumped.
+
+You can also generate samples while calculating metrics by providing `--network_ae` and `--network_diff`. For more options, please refer to the script itself.
 
 
 ### Precision/Recall Score
 
-We modified the [third-party implementation](https://github.com/youngjung/improved-precision-and-recall-metric-pytorch/tree/master) by python multiprocessing and [CuPy](https://github.com/cupy/cupy) to solve the memory hungary issue in the original implementation. **You need first install CuPy**. Note that since we would spawn multiple processes where CuPy is used, there will be multiple VGG network being copied and running. Please decrease the variable `$PR_PROCESS_NUM`. Run following command to calculate the precision/recall score.
+We modified the original [third-party implementation](https://github.com/youngjung/improved-precision-and-recall-metric-pytorch/tree/master) by python multiprocessing and [CuPy](https://github.com/cupy/cupy) to solve the memory hungary issue in the original implementation (although you may still need > 32GB memory.). **You need to first install CuPy**. Note that since we would spawn multiple processes where CuPy is used, there will be multiple VGG network being copied and run. Please decrease the variable `$PR_PROCESS_NUM` if you find you have exceeded GPU memory limitation. Run the following command to calculate the precision/recall score.
 
 ```bash
 PR_PROCESS_NUM=4 python improved_precision_recall.py $REAL_IMAGE_PATH $GENERATED_IMAGE_PATH
