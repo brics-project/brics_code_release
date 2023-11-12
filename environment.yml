@@ -1,4 +1,4 @@
-name: bright_release
+name: brics_release
 channels:
   - pytorch
   - nvidia

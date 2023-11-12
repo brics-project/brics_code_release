@@ -2,7 +2,7 @@
 
 You need anaconda/miniconda to create a proper environment by:
 ```
-conda env create --file=environment.yml && conda activate bright_release
+conda env create --file=environment.yml && conda activate brics_release
 ```
 
 
