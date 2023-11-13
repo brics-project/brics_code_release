@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+from argparse import ArgumentDefaultsHelpFormatter
+from argparse import ArgumentParser
 import os
-from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from collections import namedtuple
 from functools import partial
 from glob import glob
@@ -33,7 +34,6 @@ import torch.nn.functional as F
 import torchvision.models as models
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-
 
 from utils.simple_dataset import SimpleDatasetForMetric
 
@@ -334,8 +334,8 @@ def realism(manifold_real, feat_subject):
     return max_realism
 
 class ZipDataset(SimpleDatasetForMetric):
-    def __init__(self, root, transform=None):
-        super().__init__(root, torch.device('cpu'))
+    def __init__(self, root, transform=None, num_samples=-1):
+        super().__init__(root, torch.device('cpu'), max_num=num_samples)
         # self.fnames = list(map(lambda x: os.path.join(root, x), os.listdir(root)))
         print(f'\033[92mIterating path {root} with {self.data_len} \033[00m')
         self.transform = transform
@@ -394,13 +394,15 @@ def get_custom_loader(image_dir_or_fnames, image_size=224, batch_size=50, num_wo
         dataset = FileNames(image_dir_or_fnames, transform)
     elif isinstance(image_dir_or_fnames, str):
         if image_dir_or_fnames.endswith(".zip"):
-            dataset = ZipDataset(image_dir_or_fnames, transform=transform)
+            dataset = ZipDataset(image_dir_or_fnames,
+                                 transform=transform,
+                                 num_samples=num_samples)
         else:
             dataset = ImageFolder(image_dir_or_fnames, transform=transform)
     else:
         raise TypeError
 
-    if num_samples > 0:
+    if num_samples > 0 and not image_dir_or_fnames.endswith(".zip"):
         dataset.fnames = dataset.fnames[:num_samples]
     data_loader = DataLoader(dataset=dataset,
                              batch_size=batch_size,
@@ -445,11 +447,13 @@ if __name__ == '__main__':
     parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
     parser.add_argument('path_real', type=str, help='Path to the real images')
     parser.add_argument('path_fake', type=str, help='Path to the fake images')
-    parser.add_argument('--batch_size', type=int, default=50, help='Batch size to use')
-    parser.add_argument('--k', type=int, default=3, help='Batch size to use')
-    parser.add_argument('--num_samples', type=int, default=-1, help='number of samples to use')
+    parser.add_argument('--batch_size', type=int, default=50,
+                        help='Batch size to use')
+    parser.add_argument('--k', type=int, default=3,
+                        help='The k-nn hyper-parameter')
+    parser.add_argument('--num_samples', type=int, default=-1,
+                        help='number of samples to use')
     parser.add_argument('--toy', action='store_true')
-    parser.add_argument('--fname_precalc', type=str, default='', help='fname for precalculating manifold')
     parser.add_argument('--only_precalc', action='store_true', default=False)
     args = parser.parse_args()
 

@@ -75,7 +75,11 @@ You can also generate samples while calculating metrics by providing `--network_
 We modified the original [third-party implementation](https://github.com/youngjung/improved-precision-and-recall-metric-pytorch/tree/master) by python multiprocessing and [CuPy](https://github.com/cupy/cupy) to solve the memory hungary issue in the original implementation (although you may still need > 32GB memory.). **You need to first install CuPy**. Note that since we would spawn multiple processes where CuPy is used, there will be multiple VGG network being copied and run. Please decrease the variable `$PR_PROCESS_NUM` if you find you have exceeded GPU memory limitation. Run the following command to calculate the precision/recall score.
 
 ```bash
-PR_PROCESS_NUM=4 python improved_precision_recall.py $REAL_IMAGE_PATH $GENERATED_IMAGE_PATH
+# Calculate the statistics of the whole real dataset
+PR_PROCESS_NUM=4 python improved_precision_recall.py $REAL_IMAGE_PATH $GENERATED_IMAGE_PATH --only_precalc
+
+# Calculate the Precision/Recall scores on 50000 generated images
+PR_PROCESS_NUM=4 python improved_precision_recall.py $REAL_IMAGE_PATH $GENERATED_IMAGE_PATH --num_samples 50000
 ```
 
 The `$REAL_IMAGE_PATH` and `$GENERATED_IMAGE_PATH` can either be the root folder of images or a zip file. At the first run, the script will cache the statistics of real images under `metrics_cache` for reuse. The name of this cache will be determined by the real image path/file name. For more options please refer to the script itself.
