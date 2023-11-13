@@ -78,4 +78,4 @@ We modified the original [third-party implementation](https://github.com/youngju
 PR_PROCESS_NUM=4 python improved_precision_recall.py $REAL_IMAGE_PATH $GENERATED_IMAGE_PATH
 ```
 
-The `$REAL_IMAGE_PATH` and `$GENERATED_IMAGE_PATH` can either be the root folder of images or a zip file. At the first run, the script will cache the statistics of real images under `metrics_cache` for reuse. The name of this cache will determined by the real image path. For more options please refer to the script itself.
+The `$REAL_IMAGE_PATH` and `$GENERATED_IMAGE_PATH` can either be the root folder of images or a zip file. At the first run, the script will cache the statistics of real images under `metrics_cache` for reuse. The name of this cache will be determined by the real image path/file name. For more options please refer to the script itself.
