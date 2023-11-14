@@ -33,3 +33,5 @@ dependencies:
     - denoising-diffusion-pytorch==1.5.8
     - opencv-python-headless==4.7.0.68
     - siren-pytorch==0.1.6
+    - -e git+https://github.com/toshas/torch-fidelity.git@master#egg=torch-fidelity
+    - einops-exts

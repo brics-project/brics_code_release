@@ -44,7 +44,7 @@ Run the following scripts for diffusion training
 ```bash
 python diffusions/train.py --exp_id=$EXP_ID --batch_size=64 --encoder_decoder_network=$AUTOENCODER_PKL --dataset=$DATASET_ZIP_FILE --dim=256 --sample_num=16 --record_k=1 --train_lr=8e-5 --feat_spatial_size=$KEY_CODE_SPATIAL_SIZE --num_resnet_blocks='2,2,2,2' --no_noise_perturb=true --use_min_snr false --noise_scheduler cosine_variant_v2 --cosine_decay_max_steps=1000000 --dim_mults '1,2,3,4' --atten_layers '2,3,4' --snap_k 1280 --sample_k 1280
 ```
- The `KEY_CODE_SPATIAL_SIZE` is the spatial size of the dumped key codes. Note that it is the size before tiling operation (namely $H_z,W_z$). For more information please refer to `diffusions/train.py`.
+ The `KEY_CODE_SPATIAL_SIZE` is the spatial size of the dumped key codes. Note that it is the size before tiling operation (namely $H_z,W_z$). For more information please refer to `diffusions/train.py`. Note that we need to comment out [this line](https://github.com/lucidrains/imagen-pytorch/blob/main/imagen_pytorch/trainer.py#L272) when first using `imagen-pytorch` library.
 
 
 ## Calculate Metrics
